@@ -1,0 +1,122 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: tiffin-bd-backend
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      APP_PORT: 3000
+      APP_NAME: TiffinBD
+      LOG_LEVEL: info
+      DATABASE_HOST: mysql
+      DATABASE_PORT: 3306
+      DATABASE_USERNAME: tiffin_user
+      DATABASE_PASSWORD: tiffin_pass_123
+      DATABASE_NAME: tiffin_db
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      RABBITMQ_URI: amqp://tiffin_user:tiffin_pass@rabbitmq:5672
+      JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
+      JWT_EXPIRATION: 3600
+      CORS_ORIGIN: "*"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+      - ./dist:/app/dist
+    networks:
+      - tiffin-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["GET", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  mysql:
+    image: mysql:8.0
+    container_name: tiffin-bd-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pass_123
+      MYSQL_DATABASE: tiffin_db
+      MYSQL_USER: tiffin_user
+      MYSQL_PASSWORD: tiffin_pass_123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - tiffin-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --max_connections=1000
+
+  redis:
+    image: redis:7-alpine
+    container_name: tiffin-bd-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - tiffin-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: redis-server --appendonly yes
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: tiffin-bd-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: tiffin_user
+      RABBITMQ_DEFAULT_PASS: tiffin_pass
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - tiffin-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+
+networks:
+  tiffin-network:
+    driver: bridge

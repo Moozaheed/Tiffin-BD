@@ -1,0 +1,100 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigService } from '../config/config.service';
+import {
+  Branches,
+  Roles,
+  Users,
+  UserBranchRoles,
+  Devices,
+  SourceConnectors,
+  RawOrders,
+  NormalizedOrders,
+  NormalizationErrors,
+  AuditLogs,
+} from './entities';
+import {
+  BranchesRepository,
+  RolesRepository,
+  UsersRepository,
+  UserBranchRolesRepository,
+  DevicesRepository,
+  SourceConnectorsRepository,
+  RawOrdersRepository,
+  NormalizedOrdersRepository,
+  NormalizationErrorsRepository,
+  AuditLogsRepository,
+} from './repositories';
+
+@Module({
+  imports: [
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'mysql' as const,
+        host: configService.dbHost,
+        port: configService.dbPort,
+        username: configService.dbUsername,
+        password: configService.dbPassword,
+        database: configService.dbDatabase,
+        entities: [
+          Branches,
+          Roles,
+          Users,
+          UserBranchRoles,
+          Devices,
+          SourceConnectors,
+          RawOrders,
+          NormalizedOrders,
+          NormalizationErrors,
+          AuditLogs,
+        ],
+        synchronize: configService.isDevelopment,
+        logging: configService.isDevelopment ? ['query', 'error'] : ['error'],
+        maxQueryExecutionTime: 5000,
+        extra: {
+          connectionLimit: 10,
+          supportBigNumbers: true,
+          bigNumberStrings: true,
+        },
+      }),
+    }),
+    TypeOrmModule.forFeature([
+      Branches,
+      Roles,
+      Users,
+      UserBranchRoles,
+      Devices,
+      SourceConnectors,
+      RawOrders,
+      NormalizedOrders,
+      NormalizationErrors,
+      AuditLogs,
+    ]),
+  ],
+  providers: [
+    BranchesRepository,
+    RolesRepository,
+    UsersRepository,
+    UserBranchRolesRepository,
+    DevicesRepository,
+    SourceConnectorsRepository,
+    RawOrdersRepository,
+    NormalizedOrdersRepository,
+    NormalizationErrorsRepository,
+    AuditLogsRepository,
+  ],
+  exports: [
+    BranchesRepository,
+    RolesRepository,
+    UsersRepository,
+    UserBranchRolesRepository,
+    DevicesRepository,
+    SourceConnectorsRepository,
+    RawOrdersRepository,
+    NormalizedOrdersRepository,
+    NormalizationErrorsRepository,
+    AuditLogsRepository,
+  ],
+})
+export class DatabaseModule {}
