@@ -119,4 +119,5 @@ volumes:
 
 networks:
   tiffin-network:
+    name: tiffin-network
     driver: bridge
