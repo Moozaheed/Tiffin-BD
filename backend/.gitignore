@@ -1,6 +1,6 @@
 # Dependencies
 node_modules/
-package-lock.json
+# package-lock.json (removing from ignore as it's required for npm ci)
 yarn.lock
 pnpm-lock.yaml
 
