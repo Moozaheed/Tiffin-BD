@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "firsttris.vscode-jest-runner",
+    "EditorConfig.EditorConfig",
+    "humao.rest-client",
+    "mrmlnc.vscode-apache-conf",
+    "ms-vscode-remote.remote-containers"
+  ]
+}

@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/javascript-node:18-bullseye
+    volumes:
+      - ..:/workspaces/TiffinBD:cached
+    networks:
+      - tiffin-network
+    # Keep the container running
+    command: /bin/sh -c "while sleep 1000; do :; done"
+
+networks:
+  tiffin-network:
+    name: tiffin-network
