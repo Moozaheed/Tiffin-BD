@@ -107,10 +107,23 @@ read the aidlc-docs and the documents and the workflow-planning.md. now make you
 Git Repository Enter the URL of the Git repository to clone into your workspace. This repository should contain a devcontainer.json file to configure your development environment. i want to add this repo to my coder workspace can you make what nessary file i requires. i have given the message here
 ```
 
-**AI Response**:
-- Completed setup of DevContainer configuration.
-- Created `.devcontainer/devcontainer.json` and `.devcontainer/docker-compose.dev.yml`.
-- Added `.vscode/settings.json` and `.vscode/extensions.json` for enhanced DX.
-- Synchronized Docker networks by naming them explicitly as `tiffin-network`.
-- Updated AI-DLC state and verified project structure.
+---
+
+## Entry 7: Troubleshooting DevContainer Error
+**Timestamp**: 2026-05-11T10:30:00Z  
+**Phase**: CONSTRUCTION - Infrastructure Design (Correction)  
+**User Request (Raw)**:
+```
+Installing @devcontainers/cli using yarn.../home/coder/Tiffin-BD already exists and isn't empty, skipping clone! ... {"outcome":"error","message":"Dev container config (/home/coder/Tiffin-BD/.devcontainer/devcontainer.json) not found."} this is the logs it broken
+```
+
+**Analysis**:
+- The error "Dev container config ... not found" indicates the `.devcontainer/devcontainer.json` file is missing in the target environment.
+- The logs show that Coder skipped the clone because the directory `/home/coder/Tiffin-BD` already existed.
+- The changes were pushed to `feat/devcontainer-setup`, but the environment likely expects them on the default branch (`main`) or requires a fresh pull.
+- There is a possibility that the `workspaceFolder` path or relative `dockerComposeFile` paths need adjustment for Coder's specific mounting logic.
+
+**Action**:
+- Propose merging `feat/devcontainer-setup` to `main`.
+- Adjust `devcontainer.json` to be more robust for Coder environments.
 
