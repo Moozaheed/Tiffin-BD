@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { HealthCheckService } from './health.service';
 import { HealthCheckController } from './health.controller';
-import { LoggerService } from '../common/logger/logger.service';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
-  providers: [HealthCheckService, LoggerService],
+  imports: [SharedModule],
+  providers: [HealthCheckService],
   controllers: [HealthCheckController],
 })
 export class HealthModule {}

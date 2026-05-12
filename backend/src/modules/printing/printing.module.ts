@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { SharedModule } from '../../shared/shared.module';
 import { PrintingController } from './printing.controller';
 import { PrintingService } from './printing.service';
 

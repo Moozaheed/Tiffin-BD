@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { SharedModule } from '../../shared/shared.module';
 import { IngestionController } from './ingestion.controller';
 import { IngestionService } from './ingestion.service';
 import { IdempotencyService } from './services/idempotency.service';
@@ -12,7 +13,7 @@ import { ChilliPosConnector } from './connectors/chilli-pos.connector';
 import { DatabaseModule } from '../../database/database.module';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [SharedModule, DatabaseModule],
   controllers: [IngestionController],
   providers: [
     IngestionService,

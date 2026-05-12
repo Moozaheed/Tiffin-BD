@@ -6,17 +6,18 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { ConfigService } from '../../config/config.service';
 import { DatabaseModule } from '../../database/database.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @Module({
   imports: [
     DatabaseModule,
+    SharedModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.registerAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.jwtSecret,
-        signOptions: { expiresIn: configService.jwtExpiration },
-      }),
+    JwtModule.register({
+      secret:
+        process.env.JWT_SECRET ||
+        'your-secret-key-change-in-production-very-long-random-string-here',
+      signOptions: { expiresIn: parseInt(process.env.JWT_EXPIRATION || '3600', 10) },
     }),
   ],
   controllers: [AuthController],

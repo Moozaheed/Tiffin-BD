@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import {
   RawOrdersRepository,
@@ -22,7 +22,7 @@ export class NormalizationService {
   private orderCounter = 0;
 
   constructor(
-    private readonly amqpConnection: AmqpConnection,
+    @Optional() private readonly amqpConnection: AmqpConnection,
     private readonly rawOrdersRepository: RawOrdersRepository,
     private readonly normalizedOrdersRepository: NormalizedOrdersRepository,
     private readonly normalizationErrorsRepository: NormalizationErrorsRepository,
