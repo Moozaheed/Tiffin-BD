@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { SharedModule } from '../../shared/shared.module';
 import { EscalationController } from './escalation.controller';
 import { EscalationService } from './escalation.service';
 

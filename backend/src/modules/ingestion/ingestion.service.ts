@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit, Optional } from '@nestjs/common';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { v4 as uuid } from 'uuid';
 import { RawOrdersRepository, SourceConnectorsRepository } from '../../database/repositories';
@@ -35,7 +35,7 @@ export interface IngestionResult {
 @Injectable()
 export class IngestionService implements OnModuleInit {
   constructor(
-    private readonly amqpConnection: AmqpConnection,
+    @Optional() private readonly amqpConnection: AmqpConnection,
     private readonly rawOrdersRepository: RawOrdersRepository,
     private readonly sourceConnectorsRepository: SourceConnectorsRepository,
     private readonly connectorRegistry: ConnectorRegistry,

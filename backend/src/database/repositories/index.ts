@@ -11,7 +11,7 @@ import {
   NormalizedOrders,
   NormalizationErrors,
   AuditLogs,
-} from './entities';
+} from '../entities';
 
 @Injectable()
 export class BranchesRepository extends Repository<Branches> {
@@ -68,7 +68,12 @@ export class UsersRepository extends Repository<Users> {
   async findWithBranchRoles(userId: string): Promise<Users | null> {
     return this.findOne({
       where: { id: userId },
-      relations: ['primaryBranch', 'userBranchRoles', 'userBranchRoles.branch', 'userBranchRoles.role'],
+      relations: [
+        'primaryBranch',
+        'userBranchRoles',
+        'userBranchRoles.branch',
+        'userBranchRoles.role',
+      ],
     });
   }
 }
@@ -86,7 +91,11 @@ export class UserBranchRolesRepository extends Repository<UserBranchRoles> {
     });
   }
 
-  async findUserBranchRole(userId: string, branchId: string, roleId: string): Promise<UserBranchRoles | null> {
+  async findUserBranchRole(
+    userId: string,
+    branchId: string,
+    roleId: string
+  ): Promise<UserBranchRoles | null> {
     return this.findOne({
       where: { userId, branchId, roleId },
     });
@@ -163,11 +172,17 @@ export class RawOrdersRepository extends Repository<RawOrders> {
     });
   }
 
-  async findByExternalOrderId(externalOrderId: string, sourceConnectorId: string): Promise<RawOrders | null> {
+  async findByExternalOrderId(
+    externalOrderId: string,
+    sourceConnectorId: string
+  ): Promise<RawOrders | null> {
     return this.findOne({ where: { externalOrderId, sourceConnectorId } });
   }
 
-  async findByIdempotencyKey(sourceConnectorId: string, idempotencyKey: string): Promise<RawOrders | null> {
+  async findByIdempotencyKey(
+    sourceConnectorId: string,
+    idempotencyKey: string
+  ): Promise<RawOrders | null> {
     return this.findOne({ where: { sourceConnectorId, idempotencyKey } });
   }
 
@@ -208,7 +223,7 @@ export class NormalizedOrdersRepository extends Repository<NormalizedOrders> {
 
   async findBranchOrders(
     branchId: string,
-    options?: { status?: string; skip?: number; take?: number },
+    options?: { status?: string; skip?: number; take?: number }
   ): Promise<[NormalizedOrders[], number]> {
     const where: any = { branchId };
     if (options?.status) where.status = options.status;
@@ -229,7 +244,10 @@ export class NormalizedOrdersRepository extends Repository<NormalizedOrders> {
     });
   }
 
-  async findByExternalOrderId(externalOrderId: string, branchId: string): Promise<NormalizedOrders | null> {
+  async findByExternalOrderId(
+    externalOrderId: string,
+    branchId: string
+  ): Promise<NormalizedOrders | null> {
     return this.findOne({ where: { externalOrderId, branchId } });
   }
 
@@ -298,7 +316,10 @@ export class NormalizedOrdersRepository extends Repository<NormalizedOrders> {
     return result?.avgSeconds ? parseFloat(result.avgSeconds) : null;
   }
 
-  async countBySource(branchId?: string, days = 7): Promise<Array<{ source: string; count: number }>> {
+  async countBySource(
+    branchId?: string,
+    days = 7
+  ): Promise<Array<{ source: string; count: number }>> {
     const since = new Date();
     since.setDate(since.getDate() - days);
     const qb = this.createQueryBuilder('order')

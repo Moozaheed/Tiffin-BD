@@ -5,23 +5,30 @@ services:
       dockerfile: docker/Dockerfile
     container_name: tiffin-bd-backend
     ports:
-      - "3000:3000"
+      - '3001:3000'
     environment:
       NODE_ENV: development
       APP_PORT: 3000
       APP_NAME: TiffinBD
       LOG_LEVEL: info
-      DATABASE_HOST: mysql
-      DATABASE_PORT: 3306
-      DATABASE_USERNAME: tiffin_user
-      DATABASE_PASSWORD: tiffin_pass_123
-      DATABASE_NAME: tiffin_db
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USERNAME: tiffin_user
+      DB_PASSWORD: tiffin_pass_123
+      DB_DATABASE: tiffin_db
+      DB_SYNCHRONIZE: 'false'
+      DB_LOGGING: 'true'
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      REDIS_PASSWORD: ''
       RABBITMQ_URI: amqp://tiffin_user:tiffin_pass@rabbitmq:5672
-      JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
+      JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production-very-long-random-string-here}
       JWT_EXPIRATION: 3600
-      CORS_ORIGIN: "*"
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-your-refresh-secret-key-change-in-production-very-long-random-string-here}
+      JWT_REFRESH_EXPIRATION: 604800
+      CORS_ORIGIN: '*'
+      ENABLE_HEALTH_CHECK: 'true'
+      ENABLE_SWAGGER: 'true'
     depends_on:
       mysql:
         condition: service_healthy
@@ -36,7 +43,11 @@ services:
       - tiffin-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3000/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})\""]
+      test:
+        [
+          'CMD-SHELL',
+          'node -e "require(''http'').get(''http://localhost:3000/health'', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"',
+        ]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -51,14 +62,14 @@ services:
       MYSQL_USER: tiffin_user
       MYSQL_PASSWORD: tiffin_pass_123
     ports:
-      - "3306:3306"
+      - '33066:3306'
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
       - tiffin-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -73,14 +84,14 @@ services:
     image: redis:7-alpine
     container_name: tiffin-bd-redis
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis_data:/data
     networks:
       - tiffin-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -93,15 +104,15 @@ services:
       RABBITMQ_DEFAULT_USER: tiffin_user
       RABBITMQ_DEFAULT_PASS: tiffin_pass
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - '5672:5672'
+      - '15672:15672'
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - tiffin-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      test: ['CMD', 'rabbitmq-diagnostics', '-q', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5

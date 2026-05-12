@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '../config/config.module';
 import { ConfigService } from '../config/config.service';
 import {
   Branches,
@@ -28,37 +29,7 @@ import {
 
 @Module({
   imports: [
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'mysql' as const,
-        host: configService.dbHost,
-        port: configService.dbPort,
-        username: configService.dbUsername,
-        password: configService.dbPassword,
-        database: configService.dbDatabase,
-        entities: [
-          Branches,
-          Roles,
-          Users,
-          UserBranchRoles,
-          Devices,
-          SourceConnectors,
-          RawOrders,
-          NormalizedOrders,
-          NormalizationErrors,
-          AuditLogs,
-        ],
-        synchronize: configService.isDevelopment,
-        logging: configService.isDevelopment ? ['query', 'error'] : ['error'],
-        maxQueryExecutionTime: 5000,
-        extra: {
-          connectionLimit: 10,
-          supportBigNumbers: true,
-          bigNumberStrings: true,
-        },
-      }),
-    }),
+    ConfigModule,
     TypeOrmModule.forFeature([
       Branches,
       Roles,

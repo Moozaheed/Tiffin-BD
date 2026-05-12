@@ -7,16 +7,19 @@ export class LoggerService {
   private logger: bunyan;
   private correlationId: string;
 
-  constructor(name = 'TiffinBD', logLevel = 'info') {
+  constructor() {
+    const name = process.env.APP_NAME || 'TiffinBD';
+    const logLevel = (process.env.LOG_LEVEL as string) || 'info';
+
     this.correlationId = uuid();
     this.logger = bunyan.createLogger({
       name,
-      level: (logLevel as unknown) as bunyan.LogLevel,
+      level: logLevel as unknown as bunyan.LogLevel,
       serializers: bunyan.stdSerializers,
       streams: [
         {
           stream: process.stdout,
-          level: (logLevel as unknown) as bunyan.LogLevel,
+          level: logLevel as unknown as bunyan.LogLevel,
         },
       ],
     });
@@ -50,7 +53,12 @@ export class LoggerService {
     this.logger.warn({ ...this.getContext(context), ...meta }, message);
   }
 
-  error(message: string, error?: Error | string, context?: string, meta?: Record<string, unknown>): void {
+  error(
+    message: string,
+    error?: Error | string,
+    context?: string,
+    meta?: Record<string, unknown>
+  ): void {
     const errorObj = typeof error === 'string' ? new Error(error) : error;
     this.logger.error(
       {
@@ -58,11 +66,16 @@ export class LoggerService {
         ...meta,
         err: bunyan.stdSerializers.err(errorObj),
       },
-      message,
+      message
     );
   }
 
-  fatal(message: string, error?: Error | string, context?: string, meta?: Record<string, unknown>): void {
+  fatal(
+    message: string,
+    error?: Error | string,
+    context?: string,
+    meta?: Record<string, unknown>
+  ): void {
     const errorObj = typeof error === 'string' ? new Error(error) : error;
     this.logger.fatal(
       {
@@ -70,7 +83,7 @@ export class LoggerService {
         ...meta,
         err: bunyan.stdSerializers.err(errorObj),
       },
-      message,
+      message
     );
   }
 

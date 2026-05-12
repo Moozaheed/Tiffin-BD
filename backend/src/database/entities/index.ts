@@ -171,7 +171,7 @@ export class Users {
   @OneToMany(() => UserBranchRoles, (ubr) => ubr.user)
   userBranchRoles: UserBranchRoles[];
 
-  @OneToMany(() => Devices, (device) => device.user)
+  @OneToMany(() => Devices, (device) => device.assignedUser)
   devices: Devices[];
 
   @OneToMany(() => AuditLogs, (log) => log.user)

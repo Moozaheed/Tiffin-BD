@@ -1,11 +1,8 @@
 {
   "name": "TiffinBD Workspace",
-  "dockerComposeFile": [
-    "../backend/docker-compose.yml",
-    "docker-compose.dev.yml"
-  ],
-  "service": "app",
-  "workspaceFolder": "/workspaces/TiffinBD",
+  "dockerComposeFile": ["../backend/docker-compose.yml"],
+  "service": "backend",
+  "workspaceFolder": "/workspace/tiffinbd",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {},
     "ghcr.io/devcontainers/features/node:1": {
@@ -24,6 +21,8 @@
       ]
     }
   },
-  "remoteUser": "node",
-  "postCreateCommand": "cd backend && (cp -n .env.example .env || true) && npm install"
+  "runServices": ["backend", "mysql", "redis"],
+  "overrideCommand": false,
+  "remoteUser": "nodejs",
+  "postCreateCommand": "cd backend && (cp -n .env.example .env || true) && npm install || true"
 }
