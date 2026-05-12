@@ -18,6 +18,7 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { PrintingModule } from './modules/printing/printing.module';
 import { DevicesModule } from './modules/devices/devices.module';
 import { HealthModule } from './health/health.module';
+import { RateLimitMiddleware } from './common/middleware/rate-limit.middleware';
 import {
   Branches,
   Roles,
@@ -110,7 +111,6 @@ export class AppModule implements NestModule {
   }
 
   configure(consumer: MiddlewareConsumer): void {
-    // Middleware configuration will go here
-    // For example: correlation ID middleware, request logging, etc.
+    consumer.apply(RateLimitMiddleware).forRoutes('*');
   }
 }

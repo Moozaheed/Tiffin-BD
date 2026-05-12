@@ -7,6 +7,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { ConfigService } from '../../config/config.service';
 import { DatabaseModule } from '../../database/database.module';
 import { SharedModule } from '../../shared/shared.module';
+import { CsrfService } from '../../common/csrf/csrf.service';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { SharedModule } from '../../shared/shared.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, CsrfService],
   exports: [AuthService, JwtModule],
 })
 export class AuthModule {}
